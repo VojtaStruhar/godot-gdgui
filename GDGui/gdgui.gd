@@ -9,6 +9,7 @@ var _elements_cache: Dictionary = {}
 
 var __button_presses: Dictionary = {}
 
+
 func _ready() -> void:
 	add_child(main)
 
@@ -25,13 +26,14 @@ func _add_element(id, element: Control):
 	last.add_child(element)
 	
 
-func button(title: String = "Button") -> bool:
-	var button_id = "button_" + title
+func button(title: String = "Button", options: Dictionary = {}) -> bool:
+	var button_id = options["id"] if "id" in options else "button_" + title
+	
 	if (button_id not in _elements_cache):
 		var btn = Button.new()
 		btn.pressed.connect(func(): __button_presses[button_id] = true)
 		btn.text = title
-		btn.name = button_id
+		btn.name = str(button_id)
 		_add_element(button_id, btn)
 	
 	return __button_presses[button_id] if button_id in __button_presses else false
