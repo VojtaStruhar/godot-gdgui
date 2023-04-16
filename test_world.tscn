@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://87v3cw0xfifc"]
+
+[ext_resource type="Script" path="res://test_world.gd" id="1_ibc24"]
+[ext_resource type="Script" path="res://GDGui/gdgui.gd" id="1_nkrm8"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_d56a4"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_5jvbk"]
+sky_material = SubResource("ProceduralSkyMaterial_d56a4")
+
+[sub_resource type="Environment" id="Environment_gho27"]
+background_mode = 2
+sky = SubResource("Sky_5jvbk")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_k57hi"]
+
+[node name="TestWorld" type="Node3D"]
+script = ExtResource("1_ibc24")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_gho27")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.841247, -0.249411, 0.479686, -3.23971e-17, 0.887236, 0.461315, -0.540652, -0.38808, 0.746385, 1.5158, 1.1032, 2.28371)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_k57hi")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_nkrm8")
