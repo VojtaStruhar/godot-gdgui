@@ -15,9 +15,30 @@ func _process(delta: float) -> void:
 	for key in __button_presses:
 		__button_presses[key] = false
 	
-	# clean out the dom according to the call_count_stack
+	if _get_current_element() != null:
+		cleanup()
 	
 	_call_count_stack = [0]
+
+func cleanup() -> void:
+	while _call_count_stack.size() > 0:
+		var current = _get_current_element()
+		
+		if current != null:
+			print(_call_count_stack, " Deleting ", current)
+			if current is Node:
+				current.queue_free()
+			
+			var el = dom
+			for cc in _call_count_stack.slice(0, _call_count_stack.size() - 1):
+				if cc in el:
+					el = el[cc]
+				else: print(cc, " as in ", _call_count_stack, " not found in ", el, ", (dom): ", dom)
+			el[_call_count_stack[-1]] = null
+			
+			_increase_call_count()
+		else:
+			_call_count_stack.pop_back()
 
 func _ready() -> void:
 	add_child(main)
@@ -64,13 +85,13 @@ func _add_element(e: Control) -> void:
 
 ## Reads the element for this call_count from the dom
 func _get_current_element():
-	var tree = dom
+	var element = dom
 	for cc in _call_count_stack:
-		if cc not in tree:
+		if cc not in element:
 			return null
-		tree = dom[cc]
+		element = dom[cc]
 	
-	return tree
+	return element
 
 func _increase_call_count() -> void:
 	_call_count_stack[-1] += 1
