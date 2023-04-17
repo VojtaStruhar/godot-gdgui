@@ -15,8 +15,16 @@ func _process(_delta: float) -> void:
 		gdgui.label("Nice")
 	
 	gdgui.begin_horizontal()
+	
 	gdgui.button("Useless")
+	
+	gdgui.begin_panel()
+	gdgui.begin_vertical()
 	gdgui.button("Useless 2")
+	gdgui.label("Label in vertical")
+	gdgui.end_vertical()
+	gdgui.end_panel()
+	
 	gdgui.end_horizontal()
 	
 	

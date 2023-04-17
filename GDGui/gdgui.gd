@@ -112,17 +112,41 @@ func begin_vertical() -> void:
 
 
 func end_vertical() -> void:
-	var h = _layout_stack.pop_back()
-	if not h is VBoxContainer:
-		printerr("[GDGui] Called end_vertical, but the topmost layout wasn't a VBoxContainer: ", h)
+	var v = _layout_stack.pop_back()
+	if not v is VBoxContainer:
+		printerr("[GDGui] Called end_vertical, but the topmost layout wasn't a VBoxContainer: ", v)
 
+
+func begin_panel() -> void:
+	var current = _get_current_element()
+	if current is PanelContainer:
+		_layout_stack.push_back(current)
+	else:
+		if current is Node:
+			print(_call_count_stack, " <-> Replacing ", current.name, " (", current.get_class(), ") with a panel")
+			current.queue_free()
+		else:
+			print(_call_count_stack, " + Creating a panel")
+		
+		var p = PanelContainer.new()
+		_add_element(p)
+		_layout_stack.push_back(p)
+		_dom[_get_call_count()] = p
+	
+	_increase_call_count()
+
+
+func end_panel() -> void:
+	var p = _layout_stack.pop_back()
+	if not p is PanelContainer:
+		printerr("[GDGui] Called end_panel, but the topmost layout wasn't a PanelContainer: ", p)
 
 
 func _add_element(e: Control) -> void:
 	_get_parent_layout().add_child(e)
 
 
-## Reads the element for this call_count from the dom
+# Reads the element for this call_count from the dom
 func _get_current_element():
 	var element = _dom
 	for cc in _call_count_stack:
