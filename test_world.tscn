@@ -37,11 +37,9 @@ mesh = SubResource("BoxMesh_k57hi")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Control" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
+[node name="GDGui" type="Container" parent="CanvasLayer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 2.08165e-12)
 offset_bottom = 40.0
-scale = Vector2(1.2, 1.2)
 theme = ExtResource("2_4st0a")
 script = ExtResource("1_nkrm8")

@@ -1,6 +1,6 @@
 extends Node3D
 
-@onready var gdgui: GDGui = $CanvasLayer/Control
+@onready var gdgui: GDGui = %GDGui
 
 var lesgo = false
 var numeric = 20

@@ -1,4 +1,4 @@
-extends Control
+extends Container
 class_name GDGui
 
 var _dom = {}
@@ -13,6 +13,8 @@ var __slider_drags: Dictionary = {}
 func _ready() -> void:
 	_layout_stack = []
 	_call_count_stack = [0]
+	
+	custom_minimum_size.x = 200
 	
 	var panel = PanelContainer.new()
 	self.add_child(panel)
