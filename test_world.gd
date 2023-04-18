@@ -11,11 +11,14 @@ func gui():
 	if gdgui.button("Toggle"):
 		lesgo = not lesgo
 
-	if lesgo:
-		gdgui.label("Nice")
 
 	gdgui.begin_horizontal()
-	gdgui.label("Absolute bottom!")
+	gdgui.label("Left")
+	if lesgo:
+		gdgui.begin_vertical()
+		gdgui.label("Top")
+		gdgui.label("Bottom")
+		gdgui.end_vertical()
 	gdgui.end_horizontal()
 
 

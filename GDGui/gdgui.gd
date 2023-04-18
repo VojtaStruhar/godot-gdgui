@@ -51,11 +51,11 @@ func label(text: String) -> void:
 	else:
 		if current != null:
 			_remove_current_element()
-
+		
 		var label = Label.new()
 		label.text = text
 		_add_element(label)
-
+	
 	_increase_call_count()
 
 
@@ -69,9 +69,35 @@ func begin_horizontal() -> void:
 		var hbox = HBoxContainer.new()
 		_add_element(hbox)
 		_layout_stack.append(hbox)
-
+	
 	_increase_call_count()
+	_handle_nested_layout_dict()
 
+
+func end_horizontal() -> void:
+	_end_layout("HBoxContainer")
+
+
+func begin_vertical() -> void:
+	var current = _get_current_element()
+	if current is VBoxContainer:
+		_layout_stack.append(current)
+	else:
+		if current != null:
+			_remove_current_element()
+		var vbox = VBoxContainer.new()
+		_add_element(vbox)
+		_layout_stack.append(vbox)
+	
+	_increase_call_count()
+	_handle_nested_layout_dict()
+
+
+func end_vertical() -> void:
+	_end_layout("VBoxContainer")
+
+
+func _handle_nested_layout_dict() -> void:
 	var nested_layout = _get_current_element()
 	# There is a Node in its place
 	if not nested_layout is Dictionary:
@@ -79,19 +105,31 @@ func begin_horizontal() -> void:
 			_remove_current_element()
 		_add_element({})
 
-
 	_call_count_stack.append(0)
 
-
-func end_horizontal() -> void:
+# Use this for end_* layout calls and save on copypaste!
+func _end_layout(name: String) -> void:
 	_cleanup_layout()  # Get rid of any extra items from previous runs
 	_call_count_stack.pop_back()
 	var layout = _layout_stack.pop_back()
 	_increase_call_count()
+	
+	var should_print_warning = false
+	match name:
+		"HBoxContainer":   should_print_warning = not layout is HBoxContainer
+		"VBoxContainer":   should_print_warning = not layout is VBoxContainer
+		"PanelContainer":  should_print_warning = not layout is PanelContainer
+		"MarginContainer": should_print_warning = not layout is MarginContainer
+	
+	if should_print_warning:
+		print("WARNING: Called end_horizontal, but the topmost layout wasn't a %s: " % name, layout)
 
-	if not layout is HBoxContainer:
-		print("WARNING: Called end_horizontal, but the topmost layout wasn't a HBoxContainer: ", layout)
 
+# -------------------------------------------------------- #
+#                                                          #
+#                       UTILITIES                          #
+#                                                          #
+# -------------------------------------------------------- #
 
 func _increase_call_count() -> void:
 	_call_count_stack[-1] += 1
@@ -102,11 +140,11 @@ func _increase_call_count() -> void:
 func _add_element(element) -> void:
 	if element is Control:
 		_get_parent_layout().add_child(element)
-
+	
 	var destination = _dom
 	for cc in _call_count_stack.slice(0, _call_count_stack.size() - 1):
 		destination = destination[cc]
-
+	
 	destination[_call_count_stack[-1]] = element
 
 
@@ -117,18 +155,16 @@ func _get_current_element():
 		if cc not in subtree:
 			return null
 		subtree = subtree[cc]
-
+	
 	var cc = _call_count_stack[-1]
 	if cc not in subtree:
 		return null
-
+	
 	var element = subtree[cc]
 	if element is Control and not is_instance_valid(element):
 		return null
-
+	
 	return element
-
-	return subtree[_call_count_stack[-1]]
 
 
 func _get_parent_layout() -> Control:
@@ -146,14 +182,14 @@ func _remove_current_element() -> void:
 		if not subtree[cc] is Dictionary:
 			print("removing ", _call_count_stack, " failed. ", _dom)
 			return
-
+	
 		subtree = subtree[cc]
-
+	
 	var cc = _call_count_stack[-1]
 	if cc not in subtree:
 		print("removing ", _call_count_stack, " failed. ", _dom)
 		return
-
+	
 	var element = subtree[cc]
 	if element is Control:
 		element.queue_free()
@@ -163,7 +199,7 @@ func _remove_current_element() -> void:
 			_call_count_stack.push_back(key)
 			_remove_current_element()
 			_call_count_stack.pop_back()
-
+	
 	subtree.erase(cc)
 
 
@@ -176,14 +212,14 @@ func _cleanup_layout() -> void:
 	var current = _get_current_element()
 	while current != null:
 		var cc = _call_count_stack[-1]
-
+		
 		if current is Control:
 			current.queue_free()
 		else:  # the element is a dictionary, that means a nested layout
 			_call_count_stack.append(0)
 			_cleanup_layout()
 			_call_count_stack.pop_back()
-
+		
 		subtree.erase(cc)
 		_increase_call_count()
 		current = _get_current_element()
