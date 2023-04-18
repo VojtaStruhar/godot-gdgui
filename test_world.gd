@@ -10,7 +10,6 @@ func gui():
 	
 	if gdgui.button("Toggle"):
 		lesgo = not lesgo
-		print("[toggle to ", lesgo, "]", gdgui._dom, "\n")
 
 	if lesgo:
 		gdgui.label("Nice")
@@ -18,6 +17,7 @@ func gui():
 	gdgui.begin_horizontal()
 	gdgui.label("Absolute bottom!")
 	gdgui.end_horizontal()
+
 
 func _process(_delta: float) -> void:
 	gui()
