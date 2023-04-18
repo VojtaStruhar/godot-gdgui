@@ -13,8 +13,11 @@ func _ready() -> void:
 	_layout_stack = []
 	_call_count_stack = [0]
 	
+	var panel = PanelContainer.new()
+	self.add_child(panel)
 	var margin = MarginContainer.new()
-	self.add_child(margin)
+	panel.add_child(margin)
+	
 	margin.add_child(_main)
 
 
@@ -117,6 +120,25 @@ func begin_vertical() -> void:
 func end_vertical() -> void:
 	_end_layout("VBoxContainer")
 
+func begin_panel() -> void:
+	var current = _get_current_element()
+	if current is PanelContainer:
+		_layout_stack.append(current)
+	else:
+		if current != null:
+			_remove_current_element()
+		var panel = PanelContainer.new()
+		_add_element(panel)
+		_layout_stack.append(panel)
+	
+	_increase_call_count()
+	_handle_nested_layout_dict()
+
+
+func end_panel() -> void:
+	_end_layout("PanelContainer")
+
+
 
 func _handle_nested_layout_dict() -> void:
 	var nested_layout = _get_current_element()
@@ -143,7 +165,7 @@ func _end_layout(name: String) -> void:
 		"MarginContainer": should_print_warning = not layout is MarginContainer
 	
 	if should_print_warning:
-		print("WARNING: Called end_horizontal, but the topmost layout wasn't a %s: " % name, layout)
+		push_warning("WARNING: Mismatched layout ending - topmost layout wasn't a %s. It was " % name, layout)
 
 
 # -------------------------------------------------------- #
