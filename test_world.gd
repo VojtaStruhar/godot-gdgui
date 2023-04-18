@@ -8,12 +8,18 @@ var numeric = 20
 func gui():
 	gdgui.label("lesgo: " + str(lesgo))
 	
+	gdgui.separator()
 	
 	gdgui.begin_panel()
 	gdgui.label(str(numeric))
 	
+	gdgui.separator()
+	
 	gdgui.begin_horizontal()
 	gdgui.label("Threshold")
+	
+	gdgui.separator()
+	
 	numeric = gdgui.slider(numeric, 50, 0)
 	gdgui.end_horizontal()
 	

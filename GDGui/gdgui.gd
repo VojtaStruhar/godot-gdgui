@@ -114,6 +114,26 @@ func label(text: String) -> void:
 	_increase_call_count()
 
 
+## Places a separator automatically according to the current parent container node. 
+## VSeparator for HBox and HSeparator for VBox.
+func separator() -> void:
+	var layout = _get_parent_layout()
+	var current = _get_current_element()
+	
+	if layout is HBoxContainer:
+		if not current is VSeparator:
+			if current != null:
+				_remove_current_element()
+			_add_element(VSeparator.new())
+	else: # layout is vbox
+		if not current is HSeparator:
+			if current != null:
+				_remove_current_element()
+			_add_element(HSeparator.new())
+	
+	_increase_call_count()
+
+
 func begin_horizontal() -> void:
 	_begin_layout("HBoxContainer")
 
@@ -130,7 +150,7 @@ func end_vertical() -> void:
 	_end_layout("VBoxContainer")
 
 
-## Panel contains vertical layout by default
+## Panel contains margin and vertical containers by default
 func begin_panel() -> void:
 	_begin_layout("PanelContainer")
 	_begin_layout("MarginContainer")
