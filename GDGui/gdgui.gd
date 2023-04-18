@@ -76,26 +76,15 @@ func label(text: String) -> void:
 		if current != null:
 			_remove_current_element()
 		
-		var label = Label.new()
-		label.text = text
-		_add_element(label)
+		var l = Label.new()
+		l.text = text
+		_add_element(l)
 	
 	_increase_call_count()
 
 
 func begin_horizontal() -> void:
-	var current = _get_current_element()
-	if current is HBoxContainer:
-		_layout_stack.append(current)
-	else:
-		if current != null:
-			_remove_current_element()
-		var hbox = HBoxContainer.new()
-		_add_element(hbox)
-		_layout_stack.append(hbox)
-	
-	_increase_call_count()
-	_handle_nested_layout_dict()
+	_begin_layout("HBoxContainer")
 
 
 func end_horizontal() -> void:
@@ -103,41 +92,22 @@ func end_horizontal() -> void:
 
 
 func begin_vertical() -> void:
-	var current = _get_current_element()
-	if current is VBoxContainer:
-		_layout_stack.append(current)
-	else:
-		if current != null:
-			_remove_current_element()
-		var vbox = VBoxContainer.new()
-		_add_element(vbox)
-		_layout_stack.append(vbox)
-	
-	_increase_call_count()
-	_handle_nested_layout_dict()
+	_begin_layout("VBoxContainer")
 
 
 func end_vertical() -> void:
 	_end_layout("VBoxContainer")
 
+
+## Panel contains vertical layout by default
 func begin_panel() -> void:
-	var current = _get_current_element()
-	if current is PanelContainer:
-		_layout_stack.append(current)
-	else:
-		if current != null:
-			_remove_current_element()
-		var panel = PanelContainer.new()
-		_add_element(panel)
-		_layout_stack.append(panel)
-	
-	_increase_call_count()
-	_handle_nested_layout_dict()
+	_begin_layout("PanelContainer")
+	begin_vertical()
 
 
 func end_panel() -> void:
+	end_vertical()
 	_end_layout("PanelContainer")
-
 
 
 func _handle_nested_layout_dict() -> void:
@@ -150,22 +120,57 @@ func _handle_nested_layout_dict() -> void:
 
 	_call_count_stack.append(0)
 
+
+# Use this for begin_* layouts - less copypaste, more polar bears :)
+func _begin_layout(layout_name: String) -> void:
+	var current = _get_current_element()
+	
+	var is_desired_class = false
+	match layout_name:
+		"HBoxContainer":   is_desired_class = current is HBoxContainer
+		"VBoxContainer":   is_desired_class = current is VBoxContainer
+		"PanelContainer":  is_desired_class = current is PanelContainer
+		"MarginContainer": is_desired_class = current is MarginContainer
+		_: printerr("[GDGui internal] Unknown layout! ", layout_name)
+	
+	if is_desired_class:
+		_layout_stack.append(current)
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var layout
+		match layout_name:
+			"HBoxContainer":   layout = HBoxContainer.new()
+			"VBoxContainer":   layout = VBoxContainer.new()
+			"PanelContainer":  layout = PanelContainer.new()
+			"MarginContainer": layout = MarginContainer.new()
+			_: printerr("[GDGui internal] Unknown layout! ", layout_name)
+		
+		_add_element(layout)
+		_layout_stack.append(layout)
+	
+	_increase_call_count()
+	_handle_nested_layout_dict()
+
+
 # Use this for end_* layout calls and save on copypaste!
-func _end_layout(name: String) -> void:
+func _end_layout(layout_name: String) -> void:
 	_cleanup_layout()  # Get rid of any extra items from previous runs
 	_call_count_stack.pop_back()
 	var layout = _layout_stack.pop_back()
 	_increase_call_count()
 	
 	var should_print_warning = false
-	match name:
+	match layout_name:
 		"HBoxContainer":   should_print_warning = not layout is HBoxContainer
 		"VBoxContainer":   should_print_warning = not layout is VBoxContainer
 		"PanelContainer":  should_print_warning = not layout is PanelContainer
 		"MarginContainer": should_print_warning = not layout is MarginContainer
+		_: printerr("[GDGui internal] Unknown layout! ", layout_name)
 	
 	if should_print_warning:
-		push_warning("WARNING: Mismatched layout ending - topmost layout wasn't a %s. It was " % name, layout)
+		push_warning("WARNING: Mismatched layout ending - topmost layout wasn't a %s. It was " % layout_name, layout)
 
 
 # -------------------------------------------------------- #
