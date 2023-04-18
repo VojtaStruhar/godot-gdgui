@@ -8,8 +8,10 @@ var lesgo = false
 func gui():
 	gdgui.label("lesgo: " + str(lesgo))
 	
-	if gdgui.button("Toggle"):
-		lesgo = not lesgo
+	gdgui.begin_horizontal()
+	lesgo = gdgui.toggle("", lesgo)
+	gdgui.label("Lesgo")
+	gdgui.end_horizontal()
 
 
 	gdgui.begin_horizontal()

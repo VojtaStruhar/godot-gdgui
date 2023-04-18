@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://87v3cw0xfifc"]
+[gd_scene load_steps=8 format=3 uid="uid://87v3cw0xfifc"]
 
 [ext_resource type="Script" path="res://test_world.gd" id="1_ibc24"]
 [ext_resource type="Script" path="res://GDGui/gdgui.gd" id="1_nkrm8"]
+[ext_resource type="Theme" uid="uid://dr6ef83ff1ysj" path="res://GDGui/gdgui_theme.tres" id="2_4st0a"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_d56a4"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -41,4 +42,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+scale = Vector2(1.2, 1.2)
+theme = ExtResource("2_4st0a")
 script = ExtResource("1_nkrm8")

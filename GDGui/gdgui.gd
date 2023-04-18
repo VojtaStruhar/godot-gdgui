@@ -7,12 +7,15 @@ var _call_count_stack: Array[int] = []
 var _layout_stack: Array[Container] = []
 
 var __button_presses: Dictionary = {}
+var __checkbox_toggles: Dictionary = {}
 
 func _ready() -> void:
 	_layout_stack = []
 	_call_count_stack = [0]
-
-	self.add_child(_main)
+	
+	var margin = MarginContainer.new()
+	self.add_child(margin)
+	margin.add_child(_main)
 
 
 func _process(_delta: float) -> void:
@@ -29,7 +32,6 @@ func button(text: String) -> bool:
 	var button_id = str(_call_count_stack)
 
 	if current is Button:
-		# You should connect the press signal again here, but we don't have that in python
 		current.text = text
 	else:
 		if current != null:
@@ -42,6 +44,25 @@ func button(text: String) -> bool:
 
 	_increase_call_count()
 	return __button_presses[button_id] if button_id in __button_presses else false
+
+
+func toggle(text: String, default_value: bool = false) -> bool:
+	var current = _get_current_element()
+	var id = str(_call_count_stack)
+	if current is CheckBox:
+		current.text = text
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var ch = CheckBox.new()
+		ch.text = text
+		ch.button_pressed = default_value
+		ch.toggled.connect(func (toggled): __checkbox_toggles[id] = toggled)
+		_add_element(ch)
+	
+	_increase_call_count()
+	return __checkbox_toggles[id] if id in __checkbox_toggles else default_value
 
 
 func label(text: String) -> void:
