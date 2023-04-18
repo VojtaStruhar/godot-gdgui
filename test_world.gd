@@ -3,29 +3,24 @@ extends Node3D
 @onready var gdgui: GDGui = $CanvasLayer/Control
 
 var lesgo = false
-
+var numeric = 20
 
 func gui():
 	gdgui.label("lesgo: " + str(lesgo))
 	
+	
 	gdgui.begin_panel()
+	gdgui.label(str(numeric))
+	
 	gdgui.begin_horizontal()
-	lesgo = gdgui.toggle("", lesgo)
-	gdgui.label("Lesgo")
+	gdgui.label("Threshold")
+	numeric = gdgui.slider(numeric, 50, 0)
 	gdgui.end_horizontal()
+	
 	gdgui.end_panel()
 
 
-	gdgui.begin_horizontal()
-	gdgui.label("Left")
-	if lesgo:
-		gdgui.begin_panel()
-		gdgui.label("Top")
-		gdgui.label("Bottom")
-		gdgui.end_panel()
-	gdgui.end_horizontal()
-
 
 func _process(_delta: float) -> void:
-	gui()
 	pass
+	gui()

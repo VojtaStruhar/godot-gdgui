@@ -8,6 +8,7 @@ var _layout_stack: Array[Container] = []
 
 var __button_presses: Dictionary = {}
 var __checkbox_toggles: Dictionary = {}
+var __slider_drags: Dictionary = {}
 
 func _ready() -> void:
 	_layout_stack = []
@@ -68,6 +69,34 @@ func toggle(text: String, default_value: bool = false) -> bool:
 	return __checkbox_toggles[id] if id in __checkbox_toggles else default_value
 
 
+func slider(value: float, max_value: float = 100, min_value: float = 0) -> float:
+	var current = _get_current_element()
+	var id = str(_call_count_stack)
+	if current is HSlider:
+		current.set_value_no_signal(value)
+		current.max_value = max_value
+		current.min_value = min_value
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var slider = HSlider.new()
+		slider.set_value_no_signal(value)
+		slider.max_value = max_value
+		slider.min_value = min_value
+		
+		slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		
+		slider.custom_minimum_size.x = 100
+		slider.value_changed.connect(func (new_val): __slider_drags[id] = new_val)
+		_add_element(slider)
+	
+	_increase_call_count()
+	return __slider_drags[id] if id in __slider_drags else value
+
+
+
 func label(text: String) -> void:
 	var current = _get_current_element()
 	if current is Label:
@@ -102,11 +131,13 @@ func end_vertical() -> void:
 ## Panel contains vertical layout by default
 func begin_panel() -> void:
 	_begin_layout("PanelContainer")
+	_begin_layout("MarginContainer")
 	begin_vertical()
 
 
 func end_panel() -> void:
 	end_vertical()
+	_end_layout("MarginContainer")
 	_end_layout("PanelContainer")
 
 
