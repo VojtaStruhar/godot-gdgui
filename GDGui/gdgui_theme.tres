@@ -1,6 +1,7 @@
 [gd_resource type="Theme" format=3 uid="uid://dr6ef83ff1ysj"]
 
 [resource]
+HBoxContainer/constants/separation = 8
 MarginContainer/constants/margin_bottom = 8
 MarginContainer/constants/margin_left = 8
 MarginContainer/constants/margin_right = 8

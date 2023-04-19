@@ -6,9 +6,10 @@ var _main := VBoxContainer.new()
 var _call_count_stack: Array[int] = []
 var _layout_stack: Array[Container] = []
 
-var __button_presses: Dictionary = {}
+var __button_presses:   Dictionary = {}
 var __checkbox_toggles: Dictionary = {}
-var __slider_drags: Dictionary = {}
+var __slider_drags:     Dictionary = {}
+var __dropdown_selects: Dictionary = {}
 
 func _ready() -> void:
 	_layout_stack = []
@@ -101,6 +102,27 @@ func slider(value: float, min_value: float = 0, max_value: float = 100, step: fl
 	_increase_call_count()
 	return __slider_drags[id] if id in __slider_drags else value
 
+func dropdown(selected_index: int, options: Array) -> int:
+	var current = _get_current_element()
+	var id = str(_call_count_stack)
+	selected_index = clamp(selected_index, -1, options.size())
+	
+	if current is OptionButton:
+		current.clear()
+		for o in options: current.add_item(o)
+		current.selected = selected_index
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var opt_button = OptionButton.new()
+		for o in options: opt_button.add_item(o)
+		opt_button.selected = selected_index
+		opt_button.item_selected.connect(func (new_index): __dropdown_selects[id] = new_index)
+		_add_element(opt_button)
+	
+	_increase_call_count()
+	return __dropdown_selects[id] if id in __dropdown_selects else selected_index
 
 
 func label(text: String) -> void:

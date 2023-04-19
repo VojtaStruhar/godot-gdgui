@@ -1,34 +1,33 @@
 extends Node3D
 
-@onready var gdgui: GDGui = %GDGui
+@onready var gui: GDGui = %GDGui
 
 var lesgo = false
 var numeric: float = 20
 
 var options = ["Pizza", "Hamburger", "French Fries"]
+var selected_option = 0
 
-func gui():
-	gdgui.label("lesgo: " + str(lesgo))
+func gdgui():
+	gui.label(options[selected_option] + " is the best")
 	
-	gdgui.separator()
+	gui.begin_panel()
+	gui.label(str(numeric))
 	
-	gdgui.begin_panel()
-	gdgui.label(str(numeric))
+	gui.begin_horizontal()
+	gui.label("Threshold")
 	
-	gdgui.separator()
+	gui.separator()
 	
-	gdgui.begin_horizontal()
-	gdgui.label("Threshold")
+	numeric = gui.slider(numeric, 0, 1)
+	gui.end_horizontal()
 	
-	gdgui.separator()
+	gui.end_panel()
 	
-	numeric = gdgui.slider(numeric, 0, 1)
-	gdgui.end_horizontal()
+	gui.separator()
 	
-	gdgui.end_panel()
-
+	selected_option = gui.dropdown(selected_option, options)
 
 
 func _process(_delta: float) -> void:
-	pass
-	gui()
+	gdgui()
