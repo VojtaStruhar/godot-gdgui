@@ -71,13 +71,16 @@ func toggle(text: String, default_value: bool = false) -> bool:
 	return __checkbox_toggles[id] if id in __checkbox_toggles else default_value
 
 
-func slider(value: float, max_value: float = 100, min_value: float = 0) -> float:
+func slider(value: float, min_value: float = 0, max_value: float = 100, step: float = 0) -> float:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
+	var step_value = ((max_value - min_value) / 100.0) if step == 0 else step
+	
 	if current is HSlider:
 		current.set_value_no_signal(value)
 		current.max_value = max_value
 		current.min_value = min_value
+		current.step = step_value
 	else:
 		if current != null:
 			_remove_current_element()
@@ -86,6 +89,7 @@ func slider(value: float, max_value: float = 100, min_value: float = 0) -> float
 		slider.set_value_no_signal(value)
 		slider.max_value = max_value
 		slider.min_value = min_value
+		slider.step = step_value
 		
 		slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER

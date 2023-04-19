@@ -3,7 +3,9 @@ extends Node3D
 @onready var gdgui: GDGui = %GDGui
 
 var lesgo = false
-var numeric = 20
+var numeric: float = 20
+
+var options = ["Pizza", "Hamburger", "French Fries"]
 
 func gui():
 	gdgui.label("lesgo: " + str(lesgo))
@@ -20,7 +22,7 @@ func gui():
 	
 	gdgui.separator()
 	
-	numeric = gdgui.slider(numeric, 50, 0)
+	numeric = gdgui.slider(numeric, 0, 1)
 	gdgui.end_horizontal()
 	
 	gdgui.end_panel()
