@@ -35,6 +35,7 @@ func _process(_delta: float) -> void:
 		__button_presses[key] = false
 
 
+## Creates a plain [Button]. Returns [code]true[/code] when pressed!
 func button(text: String) -> bool:
 	var current = _get_current_element()
 	var button_id = str(_call_count_stack)
@@ -54,7 +55,8 @@ func button(text: String) -> bool:
 	return __button_presses[button_id] if button_id in __button_presses else false
 
 
-func toggle(text: String, default_value: bool = false) -> bool:
+## Creates a [CheckBox] with a description.
+func checkbox(text: String, default_value: bool = false) -> bool:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
 	if current is CheckBox:
@@ -73,6 +75,7 @@ func toggle(text: String, default_value: bool = false) -> bool:
 	return __checkbox_toggles[id] if id in __checkbox_toggles else default_value
 
 
+## Creates a [HSlider].
 func slider(value: float, min_value: float = 0, max_value: float = 100, step: float = 0) -> float:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
@@ -104,6 +107,7 @@ func slider(value: float, min_value: float = 0, max_value: float = 100, step: fl
 	return __slider_drags[id] if id in __slider_drags else value
 
 
+## Inserts a [Control] node with a minimum size set to the input in pixels.
 func space(pixels: int = 8) -> void:
 	var current = _get_current_element()
 	
@@ -120,7 +124,8 @@ func space(pixels: int = 8) -> void:
 	
 	_increase_call_count()
 
-
+## Creates an [OptionButton]. Expects a value and an array of string for the dropdown options. 
+## Returns the currently selected index.
 func dropdown(selected_index: int, options: Array) -> int:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
@@ -144,6 +149,7 @@ func dropdown(selected_index: int, options: Array) -> int:
 	return __dropdown_selects[id] if id in __dropdown_selects else selected_index
 
 
+## Creates a [Label] with given text.
 func label(text: String) -> void:
 	var current = _get_current_element()
 	if current is Label:
@@ -159,8 +165,8 @@ func label(text: String) -> void:
 	_increase_call_count()
 
 
-## Places a separator automatically according to the current parent container node. 
-## VSeparator for HBox and HSeparator for VBox.
+## Places a separator automatically according to the current parent container node -
+## [VSeparator] for [HBoxContainer] and [HSeparator] for [VBoxContainer].
 func separator() -> void:
 	var layout = _get_parent_layout()
 	var current = _get_current_element()
@@ -179,29 +185,36 @@ func separator() -> void:
 	_increase_call_count()
 
 
+## Begins a new horizontal layout with [HBoxContainer]. Be sure to call [method end_horizontal]
+## to close the layout!
 func begin_horizontal() -> void:
 	_begin_layout("HBoxContainer")
 
 
+## Ends horizontal layout started with [method start_horizontal].
 func end_horizontal() -> void:
 	_end_layout("HBoxContainer")
 
 
+## Begins a new vertical layout with [VBoxContainer]. Be sure to call [method end_vertical] to
+## end the layout properly!
 func begin_vertical() -> void:
 	_begin_layout("VBoxContainer")
 
-
+## Ends the current vertical layout started with [method start_vertical].
 func end_vertical() -> void:
 	_end_layout("VBoxContainer")
 
 
-## Panel contains margin and vertical containers by default
+## Begins a new [PanelContainer] layout. Includes a [MarginContainer] to give the panel some 
+## spacing and uses vertical layout by default. Call [method end_panel] to end the panel!
 func begin_panel() -> void:
 	_begin_layout("PanelContainer")
 	_begin_layout("MarginContainer")
 	begin_vertical()
 
 
+## Ends the panel layout started with [method begin_panel].
 func end_panel() -> void:
 	end_vertical()
 	_end_layout("MarginContainer")
