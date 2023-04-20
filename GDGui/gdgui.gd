@@ -11,11 +11,12 @@ var __checkbox_toggles: Dictionary = {}
 var __slider_drags:     Dictionary = {}
 var __dropdown_selects: Dictionary = {}
 
+
 func _ready() -> void:
 	_layout_stack = []
 	_call_count_stack = [0]
 	
-	custom_minimum_size.x = 200
+	if custom_minimum_size.x == 0: custom_minimum_size.x = 250
 	
 	var panel = PanelContainer.new()
 	self.add_child(panel)
@@ -101,6 +102,24 @@ func slider(value: float, min_value: float = 0, max_value: float = 100, step: fl
 	
 	_increase_call_count()
 	return __slider_drags[id] if id in __slider_drags else value
+
+
+func space(pixels: int = 8) -> void:
+	var current = _get_current_element()
+	
+	if current is Control and current.get_meta("gui_spacer") == true:
+		current.custom_minimum_size = Vector2(pixels, pixels)
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var spacer = Control.new()
+		spacer.set_meta("gui_spacer", true)
+		spacer.custom_minimum_size = Vector2(pixels, pixels)
+		_add_element(spacer)
+	
+	_increase_call_count()
+
 
 func dropdown(selected_index: int, options: Array) -> int:
 	var current = _get_current_element()

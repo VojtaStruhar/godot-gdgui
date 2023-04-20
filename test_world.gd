@@ -24,9 +24,12 @@ func gdgui():
 	
 	gui.end_panel()
 	
-	gui.separator()
-	
-	selected_option = gui.dropdown(selected_option, options)
+	lesgo = gui.toggle("Show food options", lesgo)
+	if lesgo:
+		gui.separator()
+		gui.space()
+		
+		selected_option = gui.dropdown(selected_option, options)
 
 
 func _process(_delta: float) -> void:
