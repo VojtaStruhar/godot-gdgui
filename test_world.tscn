@@ -38,8 +38,12 @@ mesh = SubResource("BoxMesh_k57hi")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
-offset_right = 40.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
 offset_bottom = 40.0
+grow_horizontal = 0
 
 [node name="GDGui" type="Container" parent="CanvasLayer/HBoxContainer"]
 unique_name_in_owner = true

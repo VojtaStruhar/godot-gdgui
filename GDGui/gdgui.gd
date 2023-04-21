@@ -207,11 +207,10 @@ func textfield(text: String, placeholder: String = "") -> String:
 
 
 ## Creates a [SpinBox] for number input. The step param refers to 
-## [member SpinBox.custom_arrow_step]. The number is rounded to 3 decimal places 
-## ([member SpinBox.step] = 0.001).
+## [member SpinBox.custom_arrow_step].
 ## [br]
-## Also see [method slider].
-func numberfield(value: int, min_value: int = 0, max_value: int = 0, step: int = 0, 
+## Also see [method slider] for a different style of number input!
+func numberfield(value: int, min_value: int = 0, max_value: int = 100, arrow_step: int = 1, 
 				allow_bigger_smaller: bool = false) -> int:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
@@ -220,7 +219,7 @@ func numberfield(value: int, min_value: int = 0, max_value: int = 0, step: int =
 		current.set_value_no_signal(value)
 		current.max_value = max_value
 		current.min_value = min_value
-		current.custom_arrow_step = step
+		current.custom_arrow_step = arrow_step
 		current.allow_greater = allow_bigger_smaller
 		current.allow_lesser = allow_bigger_smaller
 	else:
@@ -231,16 +230,13 @@ func numberfield(value: int, min_value: int = 0, max_value: int = 0, step: int =
 		spinbox.set_value_no_signal(value)
 		spinbox.max_value = max_value
 		spinbox.min_value = min_value
-		spinbox.custom_arrow_step = step
+		spinbox.custom_arrow_step = arrow_step
 		
 		spinbox.allow_greater = allow_bigger_smaller
 		spinbox.allow_lesser = allow_bigger_smaller
 		spinbox.update_on_text_changed = true
-		spinbox.step = 0.001
 		
-		spinbox.value_changed.connect(func (new_val): 
-			print("spinbox changed", new_val)
-			__spinbox_changes[id] = new_val)
+		spinbox.value_changed.connect(func (new_val): __spinbox_changes[id] = new_val)
 		_add_element(spinbox)
 	
 	_increase_call_count()
