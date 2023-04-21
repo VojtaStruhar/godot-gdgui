@@ -4,6 +4,7 @@ extends Node3D
 
 var lesgo = false
 var numeric: float = 20
+var number2 = 10
 var title = ""
 
 var options = ["Pizza", "Hamburger", "French Fries"]
@@ -34,10 +35,9 @@ func gdgui():
 		
 		selected_option = gui.dropdown(selected_option, options)
 	
-	#options[0] = gui.textfield(options[0])
-	title = gui.textfield(title)
-	gui.separator()
-	title = gui.textfield(title)
+	options[0] = gui.textfield(options[0])
+	gui.space()
+	number2 = gui.numberfield(number2, 0, 20, 0.5, true)
 
 func _process(_delta: float) -> void:
 	gdgui()

@@ -20,6 +20,7 @@ var __checkbox_toggles:  Dictionary = {}
 var __slider_drags:      Dictionary = {}
 var __dropdown_selects:  Dictionary = {}
 var __textfield_changes: Dictionary = {}
+var __spinbox_changes:   Dictionary = {}
 
 
 func _ready() -> void:
@@ -93,7 +94,7 @@ func checkbox(text: String, default_value: bool = false) -> bool:
 	return __checkbox_toggles[id] if id in __checkbox_toggles else default_value
 
 
-## Creates a [HSlider].
+## Creates a [HSlider] for numeric input. Also see [method numberfield]
 func slider(value: float, min_value: float = 0, max_value: float = 100, step: float = 0) -> float:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
@@ -183,6 +184,7 @@ func label(text: String) -> void:
 	_increase_call_count()
 
 
+## Creates a [LineEdit].
 func textfield(text: String, placeholder: String = "") -> String:
 	var current = _get_current_element()
 	var id = str(_call_count_stack)
@@ -203,6 +205,47 @@ func textfield(text: String, placeholder: String = "") -> String:
 	_increase_call_count()
 	return __textfield_changes[id] if id in __textfield_changes else text
 
+
+## Creates a [SpinBox] for number input. The step param refers to 
+## [member SpinBox.custom_arrow_step]. The number is rounded to 3 decimal places 
+## ([member SpinBox.step] = 0.001).
+## [br]
+## Also see [method slider].
+func numberfield(value: int, min_value: int = 0, max_value: int = 0, step: int = 0, 
+				allow_bigger_smaller: bool = false) -> int:
+	var current = _get_current_element()
+	var id = str(_call_count_stack)
+	
+	if current is SpinBox:
+		current.set_value_no_signal(value)
+		current.max_value = max_value
+		current.min_value = min_value
+		current.custom_arrow_step = step
+		current.allow_greater = allow_bigger_smaller
+		current.allow_lesser = allow_bigger_smaller
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var spinbox = SpinBox.new()
+		spinbox.set_value_no_signal(value)
+		spinbox.max_value = max_value
+		spinbox.min_value = min_value
+		spinbox.custom_arrow_step = step
+		
+		spinbox.allow_greater = allow_bigger_smaller
+		spinbox.allow_lesser = allow_bigger_smaller
+		spinbox.update_on_text_changed = true
+		spinbox.step = 0.001
+		
+		spinbox.value_changed.connect(func (new_val): 
+			print("spinbox changed", new_val)
+			__spinbox_changes[id] = new_val)
+		_add_element(spinbox)
+	
+	_increase_call_count()
+	return __spinbox_changes[id] if id in __spinbox_changes else value
+	
 
 ## Places a separator automatically according to the current parent container node -
 ## [VSeparator] for [HBoxContainer] and [HSeparator] for [VBoxContainer].

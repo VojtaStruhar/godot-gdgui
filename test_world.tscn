@@ -37,9 +37,12 @@ mesh = SubResource("BoxMesh_k57hi")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="GDGui" type="Container" parent="CanvasLayer"]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+offset_right = 40.0
 offset_bottom = 40.0
-scale = Vector2(2, 2)
+
+[node name="GDGui" type="Container" parent="CanvasLayer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 theme = ExtResource("2_4st0a")
 script = ExtResource("1_nkrm8")
