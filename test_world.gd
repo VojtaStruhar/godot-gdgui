@@ -4,11 +4,14 @@ extends Node3D
 
 var lesgo = false
 var numeric: float = 20
+var title = ""
 
 var options = ["Pizza", "Hamburger", "French Fries"]
 var selected_option = 0
 
 func gdgui():
+	gui.label(title)
+	gui.separator()
 	gui.label(options[selected_option] + " is the best")
 	
 	gui.begin_panel()
@@ -24,13 +27,17 @@ func gdgui():
 	
 	gui.end_panel()
 	
-	lesgo = gui.toggle("Show food options", lesgo)
+	lesgo = gui.checkbox("Show food options", lesgo)
 	if lesgo:
 		gui.separator()
 		gui.space()
 		
 		selected_option = gui.dropdown(selected_option, options)
-
+	
+	#options[0] = gui.textfield(options[0])
+	title = gui.textfield(title)
+	gui.separator()
+	title = gui.textfield(title)
 
 func _process(_delta: float) -> void:
 	gdgui()

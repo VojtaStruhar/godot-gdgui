@@ -1,15 +1,25 @@
 extends Container
 class_name GDGui
 
+## Helper node that creates a simple GUI for you. The API philosophy is inspired by IMGUI. 
+## The methods calls are designed to be called every frame.
+##
+## This is NOT an IMGUI implementation. The UI elements created are normal Godot UI nodes, this
+## node just provides API to setup and iterate on user interface quickly. Great for tweaking
+## shader parameters!
+
+
 var _dom = {}
 var _main := VBoxContainer.new()
 var _call_count_stack: Array[int] = []
 var _layout_stack: Array[Container] = []
 
-var __button_presses:   Dictionary = {}
-var __checkbox_toggles: Dictionary = {}
-var __slider_drags:     Dictionary = {}
-var __dropdown_selects: Dictionary = {}
+
+var __button_presses:    Dictionary = {}
+var __checkbox_toggles:  Dictionary = {}
+var __slider_drags:      Dictionary = {}
+var __dropdown_selects:  Dictionary = {}
+var __textfield_changes: Dictionary = {}
 
 
 func _ready() -> void:
@@ -31,11 +41,19 @@ func _process(_delta: float) -> void:
 	_call_count_stack = [0]
 	_layout_stack = []
 	
+	# reset the button presses every frame
 	for key in __button_presses:
 		__button_presses[key] = false
 
 
 ## Creates a plain [Button]. Returns [code]true[/code] when pressed!
+##
+## You can use this to invoke method once on press: 
+##     [codeblock]
+##     func _process(_delta: float) -> void:
+##         if gdgui.button("Spawn enemy")
+##             spawn_enemy()  # Your method here
+##     [/codeblock]
 func button(text: String) -> bool:
 	var current = _get_current_element()
 	var button_id = str(_call_count_stack)
@@ -111,7 +129,7 @@ func slider(value: float, min_value: float = 0, max_value: float = 100, step: fl
 func space(pixels: int = 8) -> void:
 	var current = _get_current_element()
 	
-	if current is Control and current.get_meta("gui_spacer") == true:
+	if current is Control and current.has_meta("gui_spacer") == true:
 		current.custom_minimum_size = Vector2(pixels, pixels)
 	else:
 		if current != null:
@@ -163,6 +181,27 @@ func label(text: String) -> void:
 		_add_element(l)
 	
 	_increase_call_count()
+
+
+func textfield(text: String, placeholder: String = "") -> String:
+	var current = _get_current_element()
+	var id = str(_call_count_stack)
+	if current is LineEdit:
+		# Setting the text while editing makes you type backwards
+		if not current.has_focus(): current.text = text
+		current.placeholder_text = placeholder
+	else:
+		if current != null:
+			_remove_current_element()
+		
+		var tf = LineEdit.new()
+		tf.text = text
+		tf.placeholder_text = placeholder
+		tf.text_changed.connect(func(val): __textfield_changes[id] = val)
+		_add_element(tf)
+	
+	_increase_call_count()
+	return __textfield_changes[id] if id in __textfield_changes else text
 
 
 ## Places a separator automatically according to the current parent container node -
